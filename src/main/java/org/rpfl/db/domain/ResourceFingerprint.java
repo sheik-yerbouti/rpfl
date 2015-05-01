@@ -27,7 +27,7 @@ public class ResourceFingerprint {
 
     @Column
     @NotNull
-    @Size(min=48, max=48)
+    @Size(min=64, max=64)
     private byte[] hash;
 
     @Column(name="verification_strength")

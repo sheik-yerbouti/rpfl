@@ -121,6 +121,16 @@ public final class Messages {
      */
     com.google.protobuf.ByteString
         getResourcesBytes(int index);
+
+    // required bool fullResponse = 2;
+    /**
+     * <code>required bool fullResponse = 2;</code>
+     */
+    boolean hasFullResponse();
+    /**
+     * <code>required bool fullResponse = 2;</code>
+     */
+    boolean getFullResponse();
   }
   /**
    * Protobuf type {@code org.rpfl.transport.protobuf.Request}
@@ -181,6 +191,11 @@ public final class Messages {
               resources_.add(input.readBytes());
               break;
             }
+            case 16: {
+              bitField0_ |= 0x00000001;
+              fullResponse_ = input.readBool();
+              break;
+            }
           }
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -223,6 +238,7 @@ public final class Messages {
       return PARSER;
     }
 
+    private int bitField0_;
     // repeated string resources = 1;
     public static final int RESOURCES_FIELD_NUMBER = 1;
     private com.google.protobuf.LazyStringList resources_;
@@ -253,14 +269,35 @@ public final class Messages {
       return resources_.getByteString(index);
     }
 
+    // required bool fullResponse = 2;
+    public static final int FULLRESPONSE_FIELD_NUMBER = 2;
+    private boolean fullResponse_;
+    /**
+     * <code>required bool fullResponse = 2;</code>
+     */
+    public boolean hasFullResponse() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>required bool fullResponse = 2;</code>
+     */
+    public boolean getFullResponse() {
+      return fullResponse_;
+    }
+
     private void initFields() {
       resources_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      fullResponse_ = false;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized != -1) return isInitialized == 1;
 
+      if (!hasFullResponse()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -270,6 +307,9 @@ public final class Messages {
       getSerializedSize();
       for (int i = 0; i < resources_.size(); i++) {
         output.writeBytes(1, resources_.getByteString(i));
+      }
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeBool(2, fullResponse_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -288,6 +328,10 @@ public final class Messages {
         }
         size += dataSize;
         size += 1 * getResourcesList().size();
+      }
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(2, fullResponse_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -407,6 +451,8 @@ public final class Messages {
         super.clear();
         resources_ = com.google.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000001);
+        fullResponse_ = false;
+        bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
 
@@ -434,12 +480,18 @@ public final class Messages {
       public org.rpfl.transport.protobuf.Messages.Request buildPartial() {
         org.rpfl.transport.protobuf.Messages.Request result = new org.rpfl.transport.protobuf.Messages.Request(this);
         int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
           resources_ = new com.google.protobuf.UnmodifiableLazyStringList(
               resources_);
           bitField0_ = (bitField0_ & ~0x00000001);
         }
         result.resources_ = resources_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.fullResponse_ = fullResponse_;
+        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -465,11 +517,18 @@ public final class Messages {
           }
           onChanged();
         }
+        if (other.hasFullResponse()) {
+          setFullResponse(other.getFullResponse());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
 
       public final boolean isInitialized() {
+        if (!hasFullResponse()) {
+          
+          return false;
+        }
         return true;
       }
 
@@ -581,6 +640,39 @@ public final class Messages {
   }
   ensureResourcesIsMutable();
         resources_.add(value);
+        onChanged();
+        return this;
+      }
+
+      // required bool fullResponse = 2;
+      private boolean fullResponse_ ;
+      /**
+       * <code>required bool fullResponse = 2;</code>
+       */
+      public boolean hasFullResponse() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>required bool fullResponse = 2;</code>
+       */
+      public boolean getFullResponse() {
+        return fullResponse_;
+      }
+      /**
+       * <code>required bool fullResponse = 2;</code>
+       */
+      public Builder setFullResponse(boolean value) {
+        bitField0_ |= 0x00000002;
+        fullResponse_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required bool fullResponse = 2;</code>
+       */
+      public Builder clearFullResponse() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        fullResponse_ = false;
         onChanged();
         return this;
       }
@@ -2065,14 +2157,15 @@ public final class Messages {
   static {
     java.lang.String[] descriptorData = {
       "\n\016Messages.proto\022\033org.rpfl.transport.pro" +
-      "tobuf\"\034\n\007Request\022\021\n\tresources\030\001 \003(\t\"G\n\010R" +
-      "esponse\022;\n\007entries\030\001 \003(\0132*.org.rpfl.tran" +
-      "sport.protobuf.ResponseEntry\"\211\001\n\rRespons" +
-      "eEntry\022\013\n\003url\030\001 \002(\t\022\014\n\004size\030\002 \002(\003\022\014\n\004has" +
-      "h\030\003 \002(\014\022O\n\024verificationStrength\030\004 \002(\01621." +
-      "org.rpfl.transport.protobuf.Verification" +
-      "Strength*D\n\024VerificationStrength\022\014\n\010notf" +
-      "ound\020\001\022\016\n\ndownloaded\020\002\022\016\n\nrecompiled\020\003"
+      "tobuf\"2\n\007Request\022\021\n\tresources\030\001 \003(\t\022\024\n\014f" +
+      "ullResponse\030\002 \002(\010\"G\n\010Response\022;\n\007entries" +
+      "\030\001 \003(\0132*.org.rpfl.transport.protobuf.Res" +
+      "ponseEntry\"\211\001\n\rResponseEntry\022\013\n\003url\030\001 \002(" +
+      "\t\022\014\n\004size\030\002 \002(\003\022\014\n\004hash\030\003 \002(\014\022O\n\024verific" +
+      "ationStrength\030\004 \002(\01621.org.rpfl.transport" +
+      ".protobuf.VerificationStrength*D\n\024Verifi" +
+      "cationStrength\022\014\n\010notfound\020\001\022\016\n\ndownload" +
+      "ed\020\002\022\016\n\nrecompiled\020\003"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -2084,7 +2177,7 @@ public final class Messages {
           internal_static_org_rpfl_transport_protobuf_Request_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_org_rpfl_transport_protobuf_Request_descriptor,
-              new java.lang.String[] { "Resources", });
+              new java.lang.String[] { "Resources", "FullResponse", });
           internal_static_org_rpfl_transport_protobuf_Response_descriptor =
             getDescriptor().getMessageTypes().get(1);
           internal_static_org_rpfl_transport_protobuf_Response_fieldAccessorTable = new

@@ -6,6 +6,7 @@ import org.iq80.snappy.SnappyFramedInputStream;
 import org.rpfl.assembly.common.FingerprintProvider;
 import org.rpfl.assembly.common.RequestHandler;
 import org.rpfl.crypt.EddsaSigner;
+import org.rpfl.crypt.ThreadLocalMessageDigest;
 import org.rpfl.db.domain.ResourceFingerprint;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +15,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.security.MessageDigest;
 import java.security.SignatureException;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -34,6 +38,9 @@ public class ProtoSnapRequestHandler implements RequestHandler {
 
     @Inject
     private EddsaSigner eddsaSigner;
+
+    @Inject
+    private ThreadLocalMessageDigest threadLocalMessageDigest;
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response) throws IOException, SignatureException {
@@ -56,12 +63,31 @@ public class ProtoSnapRequestHandler implements RequestHandler {
 
         Set<ResourceFingerprint> resourceFingerprints = fingerprintProvider.get(resources);
 
-        byte[] protosnap = protoSnapSerializer.serialize(resourceFingerprints);
-        byte[] signature = eddsaSigner.sign(protosnap);
+        byte[] responsePayload;
+
+        if(requestMessage.getFullResponse()){
+            responsePayload = protoSnapSerializer.serialize(resourceFingerprints);
+        } else {
+            MessageDigest messageDigest = threadLocalMessageDigest.get();
+
+            List<String> resourcesList = requestMessage.getResourcesList();
+
+            Comparator<ResourceFingerprint> comparator = (rfp1, rfp2) ->
+                    resourcesList.indexOf(rfp1.getUrl().toString()) - resourcesList.indexOf(rfp2.getUrl().toString());
+
+            resourceFingerprints
+                    .stream()
+                    .sorted(comparator)
+                    .forEach(rfp -> messageDigest.update(rfp.getHash()));
+
+            responsePayload = messageDigest.digest();
+        }
+
+        byte[] signature = eddsaSigner.sign(responsePayload);
 
         OutputStream outputStream = response.getOutputStream();
 
         outputStream.write(signature);
-        outputStream.write(protosnap);
+        outputStream.write(responsePayload);
     }
 }

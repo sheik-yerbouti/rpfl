@@ -2,6 +2,7 @@ package org.rpfl.transport.protobuf;
 
 message Request{
     repeated string resources = 1;
+    required bool fullResponse = 2;
 }
 
 message Response{

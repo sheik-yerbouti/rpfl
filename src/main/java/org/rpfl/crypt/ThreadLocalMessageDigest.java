@@ -8,7 +8,7 @@ public class ThreadLocalMessageDigest extends ThreadLocal<MessageDigest>{
 
     @Override
     protected MessageDigest initialValue() {
-        return new SHA3.DigestSHA3(384);
+        return new SHA3.DigestSHA3(512);
     }
 
     @Override
