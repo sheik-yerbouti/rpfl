@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<rpflConfiguration>
+    <repository url="ftp://ftp.pbone.net" localPath="/home/buildmaster/target/pbone">
+        <allowedExtensions>
+            <extension>rpm</extension>
+        </allowedExtensions>
+    </repository>
+</rpflConfiguration>
