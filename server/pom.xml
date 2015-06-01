@@ -72,6 +72,21 @@
             <version>${hibernate.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>${protobuf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.abstractj.kalium</groupId>
+            <artifactId>kalium</artifactId>
+            <version>${kalium.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>${bouncycastle.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-ehcache</artifactId>
             <version>${hibernate.version}</version>
@@ -86,16 +101,15 @@
             <artifactId>hibernate-validator</artifactId>
             <version>${hibernate-validator.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.rpfl</groupId>
-            <artifactId>shared</artifactId>
-            <version>${rpfl.version}</version>
-        </dependency>
     </dependencies>
     <properties>
         <webapi.version>7.0</webapi.version>
         <hibernate.version>5.0.0.Beta2</hibernate.version>
         <hibernate-validator.version>5.2.0.Beta1</hibernate-validator.version>
         <postgresql.version>9.4-1201-jdbc41</postgresql.version>
+        <bouncycastle.version>1.52</bouncycastle.version>
+        <protobuf.version>3.0.0-alpha-2</protobuf.version>
+        <kalium.version>0.3.0</kalium.version>
+        <protoc.bin>/usr/bin/protoc</protoc.bin>
     </properties>
 </project>

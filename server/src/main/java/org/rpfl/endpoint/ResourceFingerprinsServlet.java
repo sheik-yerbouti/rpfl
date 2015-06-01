@@ -35,7 +35,7 @@ public class ResourceFingerprinsServlet extends HttpServlet {
     private EddsaSigner eddsaSigner;
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+/*
         Request requestMessage = serializer.deserialize(request.getInputStream());
 
         checkNotNull(requestMessage);
@@ -59,6 +59,7 @@ public class ResourceFingerprinsServlet extends HttpServlet {
         } catch (Throwable e) {
             response.setStatus(SC_INTERNAL_SERVER_ERROR);
         }
+        */
     }
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

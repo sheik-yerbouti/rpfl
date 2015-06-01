@@ -2,6 +2,7 @@ package org.rpfl.assembly;
 
 import com.google.inject.Singleton;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 import org.iq80.snappy.CorruptionException;
 import org.iq80.snappy.Snappy;
 import org.iq80.snappy.SnappyFramedInputStream;
@@ -21,7 +22,8 @@ import static org.rpfl.transport.protobuf.Messages.ResponseEntry;
 
 @Singleton
 public class Serializer {
-    public Messages.Request deserialize(byte[] input) throws CorruptionException {
+    public Messages.Request deserialize(byte[] input) throws CorruptionException, InvalidProtocolBufferException
+    {
         return parseFrom(uncompress(input, 0, input.length));
     }
 
