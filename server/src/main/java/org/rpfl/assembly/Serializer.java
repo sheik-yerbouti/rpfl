@@ -2,6 +2,8 @@ package org.rpfl.assembly;
 
 import com.google.inject.Singleton;
 import com.google.protobuf.ByteString;
+import org.iq80.snappy.CorruptionException;
+import org.iq80.snappy.Snappy;
 import org.iq80.snappy.SnappyFramedInputStream;
 import org.rpfl.db.domain.ResourceFingerprint;
 import org.rpfl.transport.protobuf.Messages;
@@ -12,14 +14,15 @@ import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.iq80.snappy.Snappy.compress;
+import static org.iq80.snappy.Snappy.uncompress;
 import static org.rpfl.transport.protobuf.Messages.Request.parseFrom;
 import static org.rpfl.transport.protobuf.Messages.Response;
 import static org.rpfl.transport.protobuf.Messages.ResponseEntry;
 
 @Singleton
 public class Serializer {
-    public Messages.Request deserialize(InputStream inputStream) throws IOException {
-        return parseFrom(new SnappyFramedInputStream(inputStream, true));
+    public Messages.Request deserialize(byte[] input) throws CorruptionException {
+        return parseFrom(uncompress(input, 0, input.length));
     }
 
     public byte[] serialize(Set<ResourceFingerprint> resourceFingerprints) throws IOException {

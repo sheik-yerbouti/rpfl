@@ -8,7 +8,9 @@ import (
 var endpoints []Endpoint
 
 func InitSystem(){
+
 	files, _ := ioutil.ReadDir("/etc/rpfl.trustees.d")
+
 	endpoints = make([]Endpoint, len(files))
 
 	for _, fileInfo := range files {
@@ -16,8 +18,11 @@ func InitSystem(){
 		file, _ := os.Open(fileInfo.Name())
 
 		var endpoint Endpoint
+
 		if err := xml.NewDecoder(file).Decode(&endpoint); err != nil {
 			panic(err)
 		}
+
+		endpoints = append(endpoints, endpoint)
 	}
 }

@@ -1,34 +1,65 @@
 package rpfld
+
 import (
-	"fmt"
-	"os"
 	"io/ioutil"
 	"bytes"
 	"net/http"
-	"crypto/sha512"
 	"github.com/agl/ed25519"
+	"sort"
+	"github.com/satori/go.uuid"
+	"github.com/pmylund/go-cache"
+	"time"
 )
 
-func hashLocal(path *string) (hash []byte, err error){
-	bytes, err:= ioutil.ReadFile(*path);
+var processCache = cache.New(5 * time.Minute, 30*time.Second)
 
-	if err != nil{
-		return nil, err
+func startProcess(downloadedResources []DownloadedResource) (processId string){
+
+	sort.Sort(ByUrl(downloadedResources))
+
+	urls := getUrls(downloadedResources)
+
+	payload, err := createPayload(urls)
+
+	if err != nil {
+		panic(err)
 	}
 
-	return sha512.New().Sum(bytes), nil;
-}
-
-func Verify() (verified bool){
-
-	verifications := make(chan bool);
+	verifications := make(chan Verification);
 
 	for _, endpoint := range endpoints{
-		go verifyInternal(&endpoint, nil, verifications)
+		go getVerification(&endpoint, payload, verifications)
 	}
 
-	for i := 0; i < len(endpoints); i++ {
-		if !<-verifications {
+	verificationProcess := &VerificationProcess{
+		payload: payload,
+		verifications:verifications,
+		downloadedResources: downloadedResources,
+	};
+
+	processId = uuid.NewV4().String();
+
+	processCache.Add(processId, verificationProcess, cache.DefaultExpiration)
+
+	return processId
+}
+
+func endProcess(processId *string)(verified bool) {
+
+	var process VerificationProcess
+
+	if p, found := processCache.Get(*processId); found {
+		process = p.(VerificationProcess)
+	} else {
+		return false
+	}
+
+	calculatedHash := calculateHash(process.downloadedResources, process.payload)
+
+	for _,_ = range endpoints{
+		verification := <- process.verifications
+
+		if !ed25519.Verify(&verification.endpoint.publicKey, calculatedHash, &verification.signature) {
 			return false
 		}
 	}
@@ -36,25 +67,28 @@ func Verify() (verified bool){
 	return true
 }
 
-func verifyInternal(endpoint *Endpoint, payload []byte, verifications chan bool){
-
+func getVerification(endpoint *Endpoint, payload []byte, verifications chan Verification){
 	response, err := http.Post(endpoint.url.String(), "", bytes.NewReader(payload))
 
-	defer response.Body.Close()
 	responseBody, err := ioutil.ReadAll(response.Body)
 
+	response.Body.Close()
+
 	if err != nil {
-		fmt.Printf("%s", err)
-		os.Exit(1)
+		panic(err)
 	}
 
-	if len(responseBody) != 64{
-		panic("hilfe!!!!")
+	if len(responseBody) != 64 {
+		panic("expected responsebody from " + endpoint.url.String() + " to be 64 but was " + string(len(responseBody)))
 	}
 
 	var	signature [64]byte
 
 	copy(signature[:], responseBody[0:64])
 
-	verifications <- ed25519.Verify(&endpoint.publicKey, payload, &signature)
+	verification := new(Verification)
+	verification.endpoint = endpoint
+	verification.signature = signature
+
+	verifications <- *verification
 }

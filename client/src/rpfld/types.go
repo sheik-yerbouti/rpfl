@@ -1,4 +1,5 @@
 package rpfld
+
 import (
 	"net/url"
 	"encoding/xml"
@@ -10,6 +11,18 @@ type Endpoint struct {
 	publicKey [32]byte
 }
 
+type VerificationProcess struct {
+	payload []byte
+	downloadedResources []DownloadedResource
+	verifications chan Verification
+}
+
 type DownloadedResource struct {
-	path string
+	path *string
+	url *string
+}
+
+type Verification struct {
+	endpoint *Endpoint
+	signature [64]byte
 }

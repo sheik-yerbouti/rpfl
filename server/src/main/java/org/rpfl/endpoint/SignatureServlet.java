@@ -47,6 +47,8 @@ public class SignatureServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        byte[] input = new InputStreamReader(request.getInputStream());
+
         Request requestMessage = serializer.deserialize(request.getInputStream());
 
         checkNotNull(requestMessage);
@@ -68,6 +70,8 @@ public class SignatureServlet extends HttpServlet {
         checkArgument(requestMessage.getResourcesCount() == resources.size(), "requested resources must not contain duplicates");
 
         MessageDigest messageDigest = threadLocalMessageDigest.get();
+
+        messageDigest.update(input);
 
         fingerprintProvider
                 .get(resources)

@@ -1,4 +1,5 @@
 package rpfld
+
 import (
 	"github.com/godbus/dbus"
 	"fmt"
